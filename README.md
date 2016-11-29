@@ -12,9 +12,9 @@ EasyLogin is another my project.
 
 In this public version, credentials are hidden in config.py:
 
-　　COOKIE: a dict of name and value in cookies
+1. COOKIE: a dict of name and value in cookies
 
-　　db(): return a database connection
+2. db(): return a database connection
 
 example code for config.py:
 
