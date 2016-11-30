@@ -7,7 +7,7 @@
 Python3
 
 ## Requirement
-`pip install bs4 requests pymysql`
+`pip3 install bs4 requests pymysql`
 
 ## Manual
 
