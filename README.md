@@ -45,3 +45,7 @@ example code for config.py:
 
 ## Credits
 https://github.com/aploium/mpms
+
+## LICENSE
+"Anyone But duanduan"(ABd) license
+
