@@ -13,8 +13,6 @@ Python3
 
 To run this crawler, you need using screen and auto kill python3 processes
 
-    #Don't forget to turn on the mysqld: `service mysqld start`(Centos) or `service mysql start`(Ubuntu)
-    #I recommend you to `cp python3 pythoncc98`, and replace python3 to pythoncc98
     screen -S cc98
     while [ '1' = '1' ]; do python3 xinling.py; done
     # Press Ctrl+A C
@@ -22,11 +20,12 @@ To run this crawler, you need using screen and auto kill python3 processes
     
 If you give this python a parameter(boardid), it will get all post in this board
 
-    python3 xinling.py 100 #get all post in "У԰��Ϣ"
+    python3 xinling.py 100 #get all post in "校园信息"
 
 ## Note
 EasyLogin is another my project.
 
+Don't forget to turn on the mysqld: `service mysqld start`(Centos) or `service mysql start`(Ubuntu)
 
 In this public version, credentials are hidden in config.py:
 
@@ -34,7 +33,7 @@ In this public version, credentials are hidden in config.py:
 
 2. db(): return a database connection
 
-3. myip: randomly choose a source ip for tcp connection
+3. myip: randomly choose a source ip for tcp connection, you need to obtain these ip first ^.^
 
 example code for config.py:
 
