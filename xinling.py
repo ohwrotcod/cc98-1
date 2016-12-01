@@ -3,9 +3,15 @@ from EasyLogin import EasyLogin#假设已经pip install bs4 requests pymysql
 from time import sleep
 from bs4 import BeautifulSoup
 from mpms import MultiProcessesMultiThreads#假设mpms正常工作
+from config import COOKIE,db,myip
+import socket
+real_create_conn = socket.create_connection
+def set_src_addr(*args):
+    address, timeout = args[0], args[1]
+    source_address = (myip, 0)
+    return real_create_conn(address, timeout, source_address)
+socket.create_connection = set_src_addr
 import requests,sys,pymysql,re,os
-from config import COOKIE
-from config import db
 
 DOMAIN = "http://www.cc98.org"#假设当前网络能访问到本域名
 boardlist=[182, 114, 100, 152, 235, 562, 80, 459, 135, 81, 287, 15, 146, 173, 515, 68, 563, 180, 102, 437, 581, 339, 399, 91, 104, 283, 372, 147, 611, 736, 743, 318, 328, 248, 226, 164, 101, 58, 314, 711, 741, 255, 198, 211, 144, 263, 584, 312, 258, 296, 357, 158, 334, 105, 628, 284, 315, 749, 509, 748, 564, 326, 241, 23, 30, 594, 323, 264, 229, 186, 623, 184, 744, 487, 401, 572, 383, 165, 86, 449, 187, 99, 57, 39, 261, 551, 599, 484, 329, 85, 217, 214, 139, 580, 392, 170, 742, 320, 212, 17, 545, 593, 371, 252, 576, 308, 67, 290, 247, 169, 622, 344, 341, 266, 455, 25, 321, 148, 485, 362, 391, 377, 193, 154, 352, 145, 75, 74, 621, 417, 324, 316, 194, 191, 16, 103, 256, 179, 620, 538, 519, 481, 462, 374, 304, 288, 274, 178, 307, 285, 268, 239, 183, 493, 411, 330, 232, 747, 598, 595, 560, 475, 393, 319, 234, 473, 272, 754, 625, 583, 550, 518, 499, 47, 469, 351, 282, 281, 26, 246, 236, 233, 203, 188, 142]
@@ -161,7 +167,7 @@ def handler(meta,boardid,id,result,big):
     if len(result)==0: #or boardid==146:
         return
     try:
-        print(ip,boardid,id,result[0][2],len(result))
+        print(myip,boardid,id,result[0][2],len(result))
     except:
         print(boardid,id,">>>Cannot Print<<<",len(result))
     global conn

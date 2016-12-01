@@ -20,7 +20,9 @@ To run this crawler, you need using screen and auto kill python3 processes
     # Press Ctrl+A C
     while [ '1' = '1' ]; do date; killall python3; sleep 666; done
     
+If you give this python a parameter(boardid), it will get all post in this board
 
+    python3 xinling.py 100 #get all post in "–£‘∞–≈œ¢"
 
 ## Note
 EasyLogin is another my project.
@@ -32,15 +34,19 @@ In this public version, credentials are hidden in config.py:
 
 2. db(): return a database connection
 
+3. myip: randomly choose a source ip for tcp connection
+
 example code for config.py:
 
     #Example Code for config.py
+    import random,pymysql
     COOKIE = {'aspsky':'SOMETHING CREDIENTIAL','BoardList':'BoardID=Show',}
     def db():
         global conn
         conn = pymysql.connect(user='root',passwd='123456',host='localhost',port=3306,db='cc98',charset='utf8',init_command="set NAMES utf8")
         conn.encoding = "utf8"
         return conn
+    myip='10.1.2.{}'.format(random.randint(66,99))  #randomly choose a source ip for crawler
 
 
 ## Credits
