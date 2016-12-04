@@ -113,7 +113,7 @@ def getBoardPage(boardid,page):
     result = set()
     for i in a.getList("dispbbs.asp?boardID="):
         result.add(getPart(i,"&ID=","&"))#假设帖子列表中的<a href='dispbbs.asp?boardID=326&ID=4593133&star=1&page=1'>
-    return [i for i in result]
+    return [boardid,i for i in result]
 
 def getBBS(boardid,id,big):
     #print(id)
@@ -222,35 +222,17 @@ def spyBoard_dict(boardid_dict=[182],pages_input=None,sleeptime=86400,processes=
 def spyBoard(boardid=182,pages_input=None,sleeptime=86400,processes=2,threads=2):
     spyBoard_dict([boardid],pages_input,sleeptime,processes,threads)
 
-def spyNew(spytimes=10,sleeptime=300,processes=5,threads=4):
+def spyNew(sleeptime=300,processes=5,threads=4):
     m = MultiProcessesMultiThreads(getBBS,handler,processes=processes,threads_per_process=threads)
     t = 0
-    while t<spytimes:
-        workload = []
-        for boardid,i in getHotPost():
+    workload = []
+    thenew=getHotPost()+getNewPost()+getBoardPage(182,1)+getBoardPage(100,1)
+    for boardid,i in thenew:
             boardid,i = int(boardid),int(i)
             if [boardid,i] not in workload:
                 workload.append([boardid,i])
                 m.put([boardid,i,""])
-        for boardid,i in getNewPost():
-            boardid,i = int(boardid),int(i)
-            if [boardid,i] not in workload:
-                workload.append([boardid,i])
-                m.put([boardid,i,""])
-        for boardid in [182,100]:
-          for i in getBoardPage(boardid,1):
-            boardid,i = int(boardid),int(i)
-            if [boardid,i] not in workload:
-                workload.append([boardid,i])
-                m.put([boardid,i,""])
-
-        t += 1
-        sleep(sleeptime)
-        tmp = []
-        for boardid,i in workload:
-            if boardid not in tmp:
-                #deleteredundance(boardid)
-                tmp.append(boardid)
+    sleep(sleeptime)
     m.close()
     return
 
@@ -258,44 +240,18 @@ def main():
     import sys
     if len(sys.argv)>1:
         if sys.argv[1]=="all":
-            spyBoard_dict(workset,sleeptime=864000,processes=4,threads=5)#get all post in 10 day
+            spyBoard_dict(workset,sleeptime=864000,processes=4,threads=5)#get all post in 10 days
         else:
             spyBoard(boardid=int(sys.argv[1]))
     else:
-        spyNew(spytimes=1)
-
-def modifyTable(boardid,big=""):
-    print(">>>Modify {}<<<".format(boardid),end="")
-    sql = """ALTER TABLE `{}bbs_{}`
-MODIFY COLUMN `edittime`  datetime NOT NULL AFTER `posttime`,
-DROP PRIMARY KEY,
-ADD PRIMARY KEY (`id`, `lc`, `edittime`,`posttime`,`user`);""".format(big,boardid)
-    global conn
-    cur = conn.cursor()
-    try:
-        cur.execute(sql)
-        conn.commit()
-        print("OK")
-    except Exception as e:
-        print("Error:")
-        print(e)
-
-
-def test():
-            global boardlist
-            for i in boardlist:
-                deleteredundance(i)
-                modifyTable(i)
-                #modifyTable(i,big="big")
+        spyNew()
 
 ##print(getBoardSize(182))
 ##GetBBS
     #for j in range(2,100):
     #    for i in getBoardPage(100,j):
     #        getBBS(100,4661275)
-##DeleteRedundance
-    #deleteredundance(182)
-    ##GetBoardID
+##GetBoardID
     #print(sorted(getBoardID()))
     #result = []
     #for i in getBoardID():
