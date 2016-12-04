@@ -10,11 +10,13 @@ def set_src_addr(*args):
     address, timeout = args[0], args[1]
     source_address = (myip, 0)
     return real_create_conn(address, timeout, source_address)
-socket.create_connection = set_src_addr
+socket.create_connection = set_src_addr #for multiple ip support
 import requests,sys,pymysql,re,os
 
 DOMAIN = "http://www.cc98.org"#假设当前网络能访问到本域名
 boardlist=[182, 114, 100, 152, 235, 562, 80, 459, 135, 81, 287, 15, 146, 173, 515, 68, 563, 180, 102, 437, 581, 339, 399, 91, 104, 283, 372, 147, 611, 736, 743, 318, 328, 248, 226, 164, 101, 58, 314, 711, 741, 255, 198, 211, 144, 263, 584, 312, 258, 296, 357, 158, 334, 105, 628, 284, 315, 749, 509, 748, 564, 326, 241, 23, 30, 594, 323, 264, 229, 186, 623, 184, 744, 487, 401, 572, 383, 165, 86, 449, 187, 99, 57, 39, 261, 551, 599, 484, 329, 85, 217, 214, 139, 580, 392, 170, 742, 320, 212, 17, 545, 593, 371, 252, 576, 308, 67, 290, 247, 169, 622, 344, 341, 266, 455, 25, 321, 148, 485, 362, 391, 377, 193, 154, 352, 145, 75, 74, 621, 417, 324, 316, 194, 191, 16, 103, 256, 179, 620, 538, 519, 481, 462, 374, 304, 288, 274, 178, 307, 285, 268, 239, 183, 493, 411, 330, 232, 747, 598, 595, 560, 475, 393, 319, 234, 473, 272, 754, 625, 583, 550, 518, 499, 47, 469, 351, 282, 281, 26, 246, 236, 233, 203, 188, 142]
+#workset是现在要循环得到的板块id
+workset=[7, 16, 17, 19, 20, 21, 23, 26, 28, 36, 39, 41, 42, 47, 48, 49, 50, 52, 57, 58, 60, 67, 74, 75, 77, 83, 84, 115, 119, 126, 129, 140, 149, 151, 155, 157, 164, 165, 169, 170, 176, 178, 179, 180, 183, 187, 189, 190, 192, 193, 194, 195, 203, 204, 206, 207, 208, 211, 213, 214, 216, 217, 222, 224, 231, 232, 233, 234, 236, 241, 246, 247, 248, 252, 254, 255, 256, 258, 262, 263, 264, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 281, 282, 283, 284, 285, 286, 287, 288, 290, 292, 295, 296, 303, 304, 306, 307, 308, 310, 311, 312, 315, 316, 319, 321, 325, 326, 328, 330, 331, 334, 339, 341, 344, 346, 347, 351, 352, 353, 355, 361, 362, 369, 371, 374, 375, 377, 383, 391, 392, 393, 401, 402, 403, 404, 405, 406, 410, 411, 414, 415, 416, 417, 418, 424, 425, 426, 428, 429, 430, 431, 432, 434, 436, 437, 440, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 454, 457, 460, 462, 464, 468, 469, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 501, 502, 503, 504, 505, 506, 507, 509, 511, 513, 514, 515, 516, 517, 518, 519, 520, 535, 538, 540, 544, 545, 546, 548, 549, 550, 551, 552, 553, 554, 555, 557, 559, 560, 562, 563, 564, 568, 572, 574, 576, 578, 579, 583, 584, 585, 587, 588, 589, 590, 591, 592, 593, 595, 596, 597, 598, 599, 600, 601, 602, 603, 610, 611, 613, 615, 618, 620, 621, 622, 623, 624, 625, 626, 628, 629, 631, 632, 633, 634, 636, 637, 640, 642, 710, 711, 712, 713, 714, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 734, 735, 741, 742, 743, 747, 748, 749, 750, 752, 754]
 
 
 conn=db()
@@ -36,13 +38,15 @@ CREATE TABLE `{}bbs_{}` (
   `user` varchar(66) NOT NULL,
   `content` longtext NOT NULL,
   `gettime` datetime NOT NULL,
-  PRIMARY KEY (`id`,`lc`,`edittime`,`posttime`,`user`)
+  PRIMARY KEY (`id`,`lc`,`edittime`,`posttime`,`user`),
+  KEY `a1` (`posttime`),
+  KEY `a2` (`user`),
+  KEY `a3` (`gettime`),
+  KEY `a4` (`id`),
+  KEY `a5` (`lc`),
+  KEY `a6` (`edittime`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-ALTER TABLE `{}bbs_{}`
-ADD INDEX `a2` (`user`) ,
-ADD INDEX `a4` (`id`) ,
-ADD INDEX `a5` (`lc`);
-""".format(big,boardid,big,boardid)
+""".format(big,boardid)
     global conn
     conn=db()
     cur = conn.cursor()
@@ -97,7 +101,10 @@ def getBoardID(bigboardid=0):
 def getBoardSize(boardid):
     a = EasyLogin(cookie=COOKIE)
     a.get("{}/list.asp?boardid={}".format(DOMAIN,boardid))
-    size=list(a.b.find('td',attrs={'style':'text-wrap: none; vertical-align: middle; margin: auto; text-align: left;'}).find_all('b'))[1].text
+    try:
+        size=list(a.b.find('td',attrs={'style':'text-wrap: none; vertical-align: middle; margin: auto; text-align: left;'}).find_all('b'))[1].text
+    except:
+        size=0
     return int(size)
 
 def getBoardPage(boardid,page):
@@ -166,6 +173,9 @@ def getBBS(boardid,id,big):
 def handler(meta,boardid,id,result,big):
     if len(result)==0: #or boardid==146:
         return
+    if len(result)>1000:#avoid too log sql
+        handler(meta,boardid,id,result[1000:],big)
+        result=result[:1000]
     try:
         print(myip,boardid,id,result[0][2],len(result))
     except:
@@ -193,48 +203,24 @@ def handler(meta,boardid,id,result,big):
         print(e)
         
 
-def deleteredundance(boardid,big=""):
-    print(boardid)
-    print(">>>Delete Redundance<<<")
-    sql = """DELETE t2
-FROM
-	`{}bbs_{}` AS t1,
-	`{}bbs_{}` AS t2
-WHERE
-	t2.gettime > t1.gettime
-AND t2.id = t1.id
-AND t2.lc = t1.lc
-AND t2.user = t1.user
-AND t2.posttime = t1.posttime
-AND t2.edittime = t1.edittime;""".format(big,boardid,big,boardid)
-    global conn
-    cur = conn.cursor()
-    try:
-        cur.execute(sql)
-        conn.commit()
-        print(">>>Delete Finished<<<")
-    except Exception as e:
-        print(e)
-
-def spyBoard(boardid=182,pages=None,spytimes=1,sleeptime=86400,processes=2,threads=2):
-    if pages==None:
-        pages=getBoardSize(boardid)
-    print("Try to get {} pages".format(pages))
+def spyBoard_dict(boardid_dict=[182],pages_input=None,sleeptime=86400,processes=2,threads=2):
     m = MultiProcessesMultiThreads(getBBS,handler,processes=processes,threads_per_process=threads)
-    t = 0
-    while t<spytimes:
-        workload = []
-        for j in range(1,pages+1):
+    for boardid in boardid_dict:
+        if pages_input is not None:
+            pages=pages_input
+        else:
+            pages=getBoardSize(boardid)
+        print("[board {}]Try to get {} pages".format(boardid,pages))
+        for j in range(pages,0,-1):
             thispage = getBoardPage(boardid,j)
             if thispage==[]: break
             for i in thispage:
-                if [boardid,i] not in workload:
-                    workload.append([boardid,i])
-                    m.put([boardid,i,"big"])
-        t += 1
-        sleep(sleeptime)
-        #deleteredundance(boardid,big="big")
+                m.put([boardid,i,"big"])
+    sleep(sleeptime)
     return
+
+def spyBoard(boardid=182,pages_input=None,sleeptime=86400,processes=2,threads=2):
+    spyBoard_dict([boardid],pages_input,sleeptime,processes,threads)
 
 def spyNew(spytimes=10,sleeptime=300,processes=5,threads=4):
     m = MultiProcessesMultiThreads(getBBS,handler,processes=processes,threads_per_process=threads)
@@ -271,12 +257,8 @@ def spyNew(spytimes=10,sleeptime=300,processes=5,threads=4):
 def main():
     import sys
     if len(sys.argv)>1:
-        if sys.argv[1]=="del":
-            global boardlist
-            for i in boardlist:
-                deleteredundance(i)
-                #deleteredundance(i,big="big")
-            return
+        if sys.argv[1]=="all":
+            spyBoard_dict(workset,sleeptime=864000,processes=4,threads=5)#get all post in 10 day
         else:
             spyBoard(boardid=int(sys.argv[1]))
     else:
