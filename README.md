@@ -3,6 +3,16 @@
 ## Snapshot
 ![Snapshot](https://raw.githubusercontent.com/zjuchenyuan/cc98/master/doc/snapshot.jpg)
 
+显示说明：
+
+版块ID 帖子ID 当前页数 本帖子总页数 队列长度 帖子标题
+
+其中**队列长度**呈现出级联放大后逐步递减的趋势，原理是：
+
+主线程从帖子列表得到id加入队列→getBBS获取第一页→handler往队列中加入后续的第x页
+
+主线程完成帖子列表的所有抓取后即等待队列长度递减至0以退出程序
+
 ## Language
 Python3
 
