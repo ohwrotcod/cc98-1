@@ -11,16 +11,18 @@ Python3
 
 ## Manual
 
-To run this crawler, you need using screen and auto kill python3 processes
+> * 持续性获取最新的帖子
 
     screen -S cc98
-    while [ '1' = '1' ]; do python3 xinling.py; done
-    # Press Ctrl+A C
-    while [ '1' = '1' ]; do date; killall python3; sleep 666; done
-    
-If you give this python a parameter(boardid), it will get all post in this board
+    while [ '1' = '1' ]; do python3 xinling.py; sleep 233; done
 
-    python3 xinling.py 100 #get all post in "校园信息"
+> * 获取一个版块(如校园信息100)的历史所有发帖
+
+    python3 xinling.py 100
+    
+> * 获取全部发帖，注意修改源代码中的workset
+
+    python3 xinling.py all
 
 ## Note
 EasyLogin is another my project.
