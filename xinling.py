@@ -16,9 +16,9 @@ import requests,sys,pymysql,re,os
 DOMAIN = "http://www.cc98.org"#假设当前网络能访问到本域名
 boardlist=[182, 114, 100, 152, 235, 562, 80, 459, 135, 81, 287, 15, 146, 173, 515, 68, 563, 180, 102, 437, 581, 339, 399, 91, 104, 283, 372, 147, 611, 736, 743, 318, 328, 248, 226, 164, 101, 58, 314, 711, 741, 255, 198, 211, 144, 263, 584, 312, 258, 296, 357, 158, 334, 105, 628, 284, 315, 749, 509, 748, 564, 326, 241, 23, 30, 594, 323, 264, 229, 186, 623, 184, 744, 487, 401, 572, 383, 165, 86, 449, 187, 99, 57, 39, 261, 551, 599, 484, 329, 85, 217, 214, 139, 580, 392, 170, 742, 320, 212, 17, 545, 593, 371, 252, 576, 308, 67, 290, 247, 169, 622, 344, 341, 266, 455, 25, 321, 148, 485, 362, 391, 377, 193, 154, 352, 145, 75, 74, 621, 417, 324, 316, 194, 191, 16, 103, 256, 179, 620, 538, 519, 481, 462, 374, 304, 288, 274, 178, 307, 285, 268, 239, 183, 493, 411, 330, 232, 747, 598, 595, 560, 475, 393, 319, 234, 473, 272, 754, 625, 583, 550, 518, 499, 47, 469, 351, 282, 281, 26, 246, 236, 233, 203, 188, 142]
 #workset是现在要循环得到的板块id
-workset=[7, 16, 17, 19, 20, 21, 23, 26, 28, 36, 39, 41, 42, 47, 48, 49, 50, 52, 57, 58, 60, 67, 74, 75, 77, 83, 84, 115, 119, 126, 129, 140, 149, 151, 155, 157, 164, 165, 169, 170, 176, 178, 179, 180, 183, 187, 189, 190, 192, 193, 194, 195, 203, 204, 206, 207, 208, 211, 213, 214, 216, 217, 222, 224, 231, 232, 233, 234, 236, 241, 246, 247, 248, 252, 254, 255, 256, 258, 262, 263, 264, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 281, 282, 283, 284, 285, 286, 287, 288, 290, 292, 295, 296, 303, 304, 306, 307, 308, 310, 311, 312, 315, 316, 319, 321, 325, 326, 328, 330, 331, 334, 339, 341, 344, 346, 347, 351, 352, 353, 355, 361, 362, 369, 371, 374, 375, 377, 383, 391, 392, 393, 401, 402, 403, 404, 405, 406, 410, 411, 414, 415, 416, 417, 418, 424, 425, 426, 428, 429, 430, 431, 432, 434, 436, 437, 440, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 454, 457, 460, 462, 464, 468, 469, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 501, 502, 503, 504, 505, 506, 507, 509, 511, 513, 514, 515, 516, 517, 518, 519, 520, 535, 538, 540, 544, 545, 546, 548, 549, 550, 551, 552, 553, 554, 555, 557, 559, 560, 562, 563, 564, 568, 572, 574, 576, 578, 579, 583, 584, 585, 587, 588, 589, 590, 591, 592, 593, 595, 596, 597, 598, 599, 600, 601, 602, 603, 610, 611, 613, 615, 618, 620, 621, 622, 623, 624, 625, 626, 628, 629, 631, 632, 633, 634, 636, 637, 640, 642, 710, 711, 712, 713, 714, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 734, 735, 741, 742, 743, 747, 748, 749, 750, 752, 754]
-
-
+workset=[39, 41, 42, 47, 48, 49, 50, 52, 57, 58, 60, 67, 74, 83, 84, 115, 119, 126, 129, 140, 149, 151, 155, 157, 164, 165, 169, 170, 176, 178, 179, 180, 183, 187, 189, 190, 192, 193, 194, 195, 203, 204, 206, 207, 208, 211, 213, 214, 216, 217, 222, 224, 231, 232, 233, 234, 236, 241, 246, 247, 248, 252, 254, 255, 256, 258, 262, 263, 264, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 281, 282, 283, 284, 285, 286, 287, 288, 290, 292, 295, 296, 303, 304, 306, 307, 308, 310, 311, 312, 315, 316, 319, 321, 325, 326, 328, 330, 331, 334, 339, 341, 344, 346, 347, 351, 352, 353, 355, 361, 362, 369, 371, 374, 375, 377, 383, 391, 392, 393, 401, 402, 403, 404, 405, 406, 410, 411, 414, 415, 416, 417, 418, 424, 425, 426, 428, 429, 430, 431, 432, 434, 436, 437, 440, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 454, 457, 460, 462, 464, 468, 469, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 501, 502, 503, 504, 505, 506, 507, 509, 511, 513, 514, 515, 516, 517, 518, 519, 520, 535, 538, 540, 544, 545, 546, 548, 549, 550, 551, 552, 553, 554, 555, 557, 559, 560, 562, 563, 564, 568, 572, 574, 576, 578, 579, 583, 584, 585, 587, 588, 589, 590, 591, 592, 593, 595, 596, 597, 598, 599, 600, 601, 602, 603, 610, 611, 613, 615, 618, 620, 621, 622, 623, 624, 625, 626, 628, 629, 631, 632, 633, 634, 636, 637, 640, 642, 710, 711, 712, 713, 714, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 734, 735, 741, 742, 743, 747, 748, 749, 750, 752, 754]
+a = EasyLogin(cookie=COOKIE)
+blacklist=[(182,4238943),(100,810149)]
 conn=db()
 
 def filter_emoji(desstr,restr='emoji'):  
@@ -113,71 +113,74 @@ def getBoardPage(boardid,page):
     result = set()
     for i in a.getList("dispbbs.asp?boardID="):
         result.add(getPart(i,"&ID=","&"))#假设帖子列表中的<a href='dispbbs.asp?boardID=326&ID=4593133&star=1&page=1'>
-    return [boardid,i for i in result]
+    return [[boardid,i] for i in result]
 
-def getBBS(boardid,id,big):
-    #print(id)
-    a = EasyLogin(cookie=COOKIE)
+def getBBS(boardid,id,big,star,number):
+    if (boardid,id) in blacklist:
+        return [boardid,id,star,0,[],big]
+    #print(boardid,id,big,star,number)
+    global a
+    if a is None:
+        a = EasyLogin(cookie=COOKIE)
     result = []
-    star = 1
-    a.get("{}/dispbbs.asp?BoardID={}&id={}&star=1".format(DOMAIN,boardid,id))
-    try:
-        number = int(a.b.find("span",attrs={"id":"topicPagesNavigation"}).find("b").text)#假设<span id="topicPagesNavigation">本主题贴数 <b>6</b>
-    except:
-        return [boardid,id,[],big]
+    a.get("{}/dispbbs.asp?BoardID={}&id={}&star={}".format(DOMAIN,boardid,id,star))
+    if star == 1:
+        try:
+            number = int(a.b.find("span",attrs={"id":"topicPagesNavigation"}).find("b").text)#假设<span id="topicPagesNavigation">本主题贴数 <b>6</b>
+        except:
+            return [boardid,id,star,0,[],big]
+        title = a.b.title.text.strip(" » CC98论坛")#帖子标题使用页面标题，假设页面标题的格式为"title &raquo; CC98论坛"
+        result.append([0,str(boardid),title,"1970-01-01 08:00:01","1970-01-01 08:00:01"])
     pages = (number//10 + 1) if number%10 !=0 else number//10#假设每页只有10个楼层
     lastpage = number - 10*(pages-1)
-    for star in range(1,pages+1):
-        if star!=1:
-            a.get("{}/dispbbs.asp?BoardID={}&id={}&star={}".format(DOMAIN,boardid,id,star))
-        else:
-            title = a.b.title.text.strip(" » CC98论坛")#帖子标题使用页面标题，假设页面标题的格式为"title &raquo; CC98论坛"
-            result.append([0,"",title,"1970-01-01 08:00:01","1970-01-01 08:00:01"])
-            #print(title)
-        for i in range(1,11 if star!=pages else lastpage+1):#最后一页没有第lastpage+1个楼层
-            #print(star,i)
-            lc = (star-1)*10 + i
-            floorstart = a.b.find("a",attrs={"name":"{}".format(i if i!=10 else 0)})
-            if floorstart is None:
-                result.append([lc,"98Deleter",">>>No Content<<<","1970-01-01 08:00:01","1970-01-01 08:00:01"])
-                continue
-            table = floorstart.next_sibling.next_sibling#假设楼层内容开始的table前都有<a name="1"></a>
+    for i in range(1,11 if star!=pages else lastpage+1):#最后一页没有第lastpage+1个楼层
+        #print(star,i)
+        lc = (star-1)*10 + i
+        floorstart = a.b.find("a",attrs={"name":"{}".format(i if i!=10 else 0)})
+        if floorstart is None:
+            #result.append([lc,"98Deleter",">>>No Content<<<","1970-01-01 08:00:01","1970-01-01 08:00:01"])
+            continue
+        table = floorstart.next_sibling.next_sibling#假设楼层内容开始的table前都有<a name="1"></a>
 
-            #print(table)
-            for t in list(table.next_siblings)[0:20]: #由于BeautifulSoup太渣,事实上table还有一部分
-                if "IP" in str(t):
-                    table_part2 = t
-                    break     
-            #print(table_part2)
-            user = table.find('b').text#假设表格中第一个加粗<b>的就是发帖用户名
-            #print("{},{},{},{}".format(id,star,user,i))
-            lastedit = table_part2.find("span",attrs={"style":"color: gray;"})#假设本楼层发生了编辑，最后的编辑时间<span style="color: gray;">本贴由作者最后编辑于 2016/10/28 21:33:56</span>
+        #print(table)
+        for t in list(table.next_siblings)[0:20]: #由于BeautifulSoup太渣,事实上table还有一部分
+            if "IP" in str(t):
+                table_part2 = t
+                break     
+        #print(table_part2)
+        user = table.find('b').text#假设表格中第一个加粗<b>的就是发帖用户名
+        #print("{},{},{},{}".format(id,star,user,i))
+        lastedit = table_part2.find("span",attrs={"style":"color: gray;"})#假设本楼层发生了编辑，最后的编辑时间<span style="color: gray;">本贴由作者最后编辑于 2016/10/28 21:33:56</span>
 
-            lastedittime = " ".join(lastedit.text.split()[-2:]).replace("/","-") if lastedit != None else "1970-01-01 08:00:01"#没有编辑就返回0
-            #print(lastedittime)
-            posttime = table.find_next("td",attrs={"align":"center"}).get_text(strip=True).replace("/","-")#发帖时间，注意find_next有可能找到下个楼层，希望没错			<td class="tablebody1" valign="middle" align="center" width="175">
-            #假设发帖时间的HTML：
-            #				<a href=#>
-            #				<img align="absmiddle" border="0" width="13" height="15" src="pic/ip.gif" title="点击查看用户来源及管理&#13发贴IP：*.*.*.*"></a>
-            #		2016/10/28 21:32:45
-            #			</td>
+        lastedittime = " ".join(lastedit.text.split()[-2:]).replace("/","-") if lastedit != None else "1970-01-01 08:00:01"#没有编辑就返回0
+        #print(lastedittime)
+        posttime = table.find_next("td",attrs={"align":"center"}).get_text(strip=True).replace("/","-")#发帖时间，注意find_next有可能找到下个楼层，希望没错			<td class="tablebody1" valign="middle" align="center" width="175">
+        #假设发帖时间的HTML：
+        #				<a href=#>
+        #				<img align="absmiddle" border="0" width="13" height="15" src="pic/ip.gif" title="点击查看用户来源及管理&#13发贴IP：*.*.*.*"></a>
+        #		2016/10/28 21:32:45
+        #			</td>
 
-            #print(posttime)
-            contentdiv = table.find('article').find('div')
-            content = contentdiv.text if contentdiv is not None else ">>>No Content<<<"
-            #print(content)
-            result.append([lc,user,content,posttime,lastedittime])
+        #print(posttime)
+        contentdiv = table.find('article').find('div')
+        content = contentdiv.text if contentdiv is not None else ">>>No Content<<<"
+        #print(content)
+        result.append([lc,user,content,posttime,lastedittime])
         #break
-    return [boardid,id,result,big]
+    return [boardid,id,star,number,result,big]
 
-def handler(meta,boardid,id,result,big):
+def handler(meta,boardid,id,star,number,result,big):
     if len(result)==0: #or boardid==146:
         return
-    if len(result)>1000:#avoid too log sql
-        handler(meta,boardid,id,result[1000:],big)
-        result=result[:1000]
+    if star==1:
+        pages = (number//10 + 1) if number%10 !=0 else number//10
+        for star in range(2,pages+1):
+            meta.self.put([boardid,id,big,star,number])
     try:
-        print(myip,boardid,id,result[0][2],len(result))
+        if star==1:
+            print(myip,boardid,id,star,number//10+1,meta.self.task_queue.qsize(),result[0][2])
+        else:
+            print(myip,boardid,id,star,number//10+1,meta.self.task_queue.qsize())
     except:
         print(boardid,id,">>>Cannot Print<<<",len(result))
     global conn
@@ -215,8 +218,11 @@ def spyBoard_dict(boardid_dict=[182],pages_input=None,sleeptime=86400,processes=
             thispage = getBoardPage(boardid,j)
             if thispage==[]: break
             for i in thispage:
-                m.put([boardid,i,"big"])
-    sleep(sleeptime)
+                m.put([boardid,i[1],"big",1,0])
+    while m.task_queue.qsize()>0:
+        sleep(5)
+    print("ended!")
+    m.join()
     return
 
 def spyBoard(boardid=182,pages_input=None,sleeptime=86400,processes=2,threads=2):
@@ -231,9 +237,10 @@ def spyNew(sleeptime=300,processes=5,threads=4):
             boardid,i = int(boardid),int(i)
             if [boardid,i] not in workload:
                 workload.append([boardid,i])
-                m.put([boardid,i,""])
-    sleep(sleeptime)
-    m.close()
+                m.put([boardid,i,"",1,0])
+    while m.task_queue.qsize()>0:
+        sleep(5)
+    m.join()
     return
 
 def main():
