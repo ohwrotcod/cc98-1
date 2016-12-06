@@ -114,7 +114,7 @@ def getBoardPage(boardid,page):
     result = set()
     for i in a.getList("dispbbs.asp?boardID="):
         result.add(getPart(i,"&ID=","&"))#假设帖子列表中的<a href='dispbbs.asp?boardID=326&ID=4593133&star=1&page=1'>
-    return [boardid,i for i in result]
+    return [(boardid,i) for i in result]
 
 def getBBS(boardid,id,big):
     #print(id)
@@ -216,7 +216,7 @@ def spyBoard_dict(boardid_dict=[182],pages_input=None,sleeptime=86400,processes=
             thispage = getBoardPage(boardid,j)
             if thispage==[]: break
             for i in thispage:
-                m.put([boardid,i,"big"])
+                m.put([boardid,i[1],"big"])
     sleep(sleeptime)
     return
 
