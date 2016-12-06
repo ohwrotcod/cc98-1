@@ -1,7 +1,9 @@
 # cc98 Crawler
 
+> 目前此版本存在bug，导致数据库特定帖子以不同id存在多份，原因不明，建议您不要运行本版本
+
 ## Snapshot
-![Snapshot](https://raw.githubusercontent.com/zjuchenyuan/cc98/master/doc/snapshot.jpg)
+![Snapshot](doc/snapshot.jpg)
 
 显示说明：
 
