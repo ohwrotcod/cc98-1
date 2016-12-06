@@ -1,4 +1,5 @@
 #coding:utf-8
+#stable version on 2016-12-05
 from EasyLogin import EasyLogin#假设已经pip install bs4 requests pymysql
 from time import sleep
 from bs4 import BeautifulSoup
