@@ -13,7 +13,7 @@
 import requests,pickle,os,random
 from bs4 import BeautifulSoup
 try:
-    from urllib.parse import urlencode
+    from urllib.parse import urlencode,quote
 except:
     print("Please Use Python3")
     exit()
@@ -76,7 +76,7 @@ class EasyLogin():
           #    pass
         x = self.s.get(url,headers=headers,allow_redirects=False,proxies=self.proxies)
         if result: 
-            if 'Location' in x.headers or len(x.text)==0: return False
+            if not o and 'Location' in x.headers or len(x.text)==0: return False
             else:self.b = BeautifulSoup(x.text.replace("<br>","\n").replace("<BR>","\n"),'html.parser')
         if save:  open(self.cookiefile,"wb").write(pickle.dumps(self.s.cookies))
         if o:#if you need object returned
@@ -124,7 +124,7 @@ class EasyLogin():
          if self.b == None: return ""
          x = self.b.find("input",attrs={"name":"__VIEWSTATE"})
          if x == None: return ""
-         return x["value"]
+         return quote(x["value"])
          
     def save(self,filename="EasyLogin.status"):
         open(filename,"wb").write(pickle.dumps(self))
